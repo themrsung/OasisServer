@@ -5,7 +5,13 @@ import com.comphenix.protocol.ProtocolManager;
 import oasis.economyx.EconomyX;
 
 /**
- * Main class of OasisServer
+ * Main class of OasisServer.
+ * <p>
+ *     Oasis uses a custom Minecraft client, and handles network IO via packets.
+ *     In-game commands are not used. (even for basic messaging or teleportation)
+ *     Vanilla clients can still join, but cannot use any of the features.
+ *     (unless they create their own client compatible with this implementation)
+ * </p>
  */
 public final class OasisServer extends EconomyX {
     @Override
@@ -15,7 +21,10 @@ public final class OasisServer extends EconomyX {
         // ProtocolLib
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
 
-
+        /**
+         * Alright I'm going to bed now
+         */
+        final String HELP = "ME";
 
         // as#uuid#(whatever)
 
