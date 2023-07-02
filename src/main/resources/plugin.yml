@@ -2,3 +2,4 @@ name: OasisServer
 version: '${project.version}'
 main: oasis.oasisserver.OasisServer
 api-version: '1.20'
+depend: [ProtocolLib]

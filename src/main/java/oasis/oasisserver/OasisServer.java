@@ -1,8 +1,31 @@
 package oasis.oasisserver;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
 import oasis.economyx.EconomyX;
+import oasis.oasisserver.listeners.banking.BankAccountClosePacketAdapter;
+import oasis.oasisserver.listeners.banking.BankAccountOpenPacketAdapter;
+import oasis.oasisserver.listeners.banking.BankDepositPacketAdapter;
+import oasis.oasisserver.listeners.banking.BankWithdrawPacketAdapter;
+import oasis.oasisserver.listeners.card.CardActivatePacketAdapter;
+import oasis.oasisserver.listeners.card.CardIssuePacketAdapter;
+import oasis.oasisserver.listeners.card.CardRevokePacketAdapter;
+import oasis.oasisserver.listeners.card.CardTerminalCreatePacketAdapter;
+import oasis.oasisserver.listeners.create.CreateCompanyPacketAdapter;
+import oasis.oasisserver.listeners.create.CreateInstitutionPacketAdapter;
+import oasis.oasisserver.listeners.create.CreateNationPacketAdapter;
+import oasis.oasisserver.listeners.create.CreateOrganizationPacketAdapter;
+import oasis.oasisserver.listeners.guarantee.GuaranteeIssuePacketAdapter;
+import oasis.oasisserver.listeners.guarantee.GuaranteeRevokePacketAdapter;
+import oasis.oasisserver.listeners.market.MarketDelistAssetPacketAdapter;
+import oasis.oasisserver.listeners.market.MarketListAssetPacketAdapter;
+import oasis.oasisserver.listeners.pay.PayPacketAdapter;
+import oasis.oasisserver.listeners.property.PropertyAbandonPacketAdapter;
+import oasis.oasisserver.listeners.property.PropertyAuthorizeProtectionPacketAdapter;
+import oasis.oasisserver.listeners.property.PropertyClaimPacketAdapter;
+import oasis.oasisserver.listeners.property.PropertySetProtectorPacketAdapter;
 
 /**
  * Main class of OasisServer.
@@ -14,47 +37,43 @@ import oasis.economyx.EconomyX;
  * </p>
  */
 public final class OasisServer extends EconomyX {
+    private static final ProtocolManager PROTOCOL_MANAGER = ProtocolLibrary.getProtocolManager();
+
     @Override
     public void onEnable() {
         super.onEnable();
 
-        // ProtocolLib
-        ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+        final OasisServer os = this;
+        final ListenerPriority lp = ListenerPriority.MONITOR;
+        final PacketType pt = PacketType.Play.Client.CUSTOM_PAYLOAD;
 
-        /**
-         * Alright I'm going to bed now
-         */
-        final String HELP = "ME";
+        PROTOCOL_MANAGER.addPacketListener(new CreateCompanyPacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new CreateInstitutionPacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new CreateNationPacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new CreateOrganizationPacketAdapter(os, lp, pt));
 
-        // as#uuid#(whatever)
+        PROTOCOL_MANAGER.addPacketListener(new BankAccountOpenPacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new BankAccountClosePacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new BankDepositPacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new BankWithdrawPacketAdapter(os, lp, pt));
 
-        // create#company#symbol#name#capital
-        // create#organization#name#currency
-        // create#nation#name#capital
+        PROTOCOL_MANAGER.addPacketListener(new CardActivatePacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new CardIssuePacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new CardRevokePacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new CardTerminalCreatePacketAdapter(os, lp, pt));
 
-        // bank#deposit#bankuuid#accountuuid#amount
-        // bank#withdraw#bankuuid#accountuuid#amount
+        PROTOCOL_MANAGER.addPacketListener(new GuaranteeIssuePacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new GuaranteeRevokePacketAdapter(os, lp, pt));
 
-        // card#issue
-        // card#activate
-        // card#revoke
-        // card#terminal#create
+        PROTOCOL_MANAGER.addPacketListener(new PayPacketAdapter(os, lp, pt));
 
-        // contract#create
-        // contract#forgive
+        PROTOCOL_MANAGER.addPacketListener(new PropertyClaimPacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new PropertyAbandonPacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new PropertySetProtectorPacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new PropertyAuthorizeProtectionPacketAdapter(os, lp, pt));
 
-        // guarantee#issue
-        // guarantee#revoke
-
-        // pay#recipient#amount
-
-        // property#claim
-        // property#abandon
-        // property#setprotector (called by holder)
-        // property#authorizeprotection (called by protector)
-
-        // market#list#listing
-        // market#delist#listing
+        PROTOCOL_MANAGER.addPacketListener(new MarketListAssetPacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new MarketDelistAssetPacketAdapter(os, lp, pt));
 
         // order#create#order
         // order#cancel#order
@@ -68,5 +87,7 @@ public final class OasisServer extends EconomyX {
 
         // hostility#declare
         // hostility#revoke
+
+        // dm#send (Handled through OasisServer)
     }
 }
