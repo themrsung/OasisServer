@@ -19,7 +19,10 @@ import oasis.oasisserver.listeners.vaulting.*;
 import oasis.oasisserver.listeners.voting.*;
 import oasis.oasisserver.listeners.warfare.*;
 
+import oasis.oasisserver.types.Message;
 import org.bukkit.Bukkit;
+
+import java.util.List;
 
 /**
  * Main class of OasisServer.
@@ -32,6 +35,8 @@ import org.bukkit.Bukkit;
  */
 public final class OasisServer extends EconomyX {
     private static final ProtocolManager PROTOCOL_MANAGER = ProtocolLibrary.getProtocolManager();
+
+    private transient List<Message> messages;
 
     @Override
     public void onEnable() {
