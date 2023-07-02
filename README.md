@@ -1,6 +1,11 @@
 # OasisServer
 #### "The" best Minecraft economy server.
 
+**Server information**
+- Address: **jabonmc.mcok.kr**
+- Version: Paper 1.20.1
+- Language: Korean
+
 Uses EconomyX.
 https://github.com/themrsung/EconomyX
 
