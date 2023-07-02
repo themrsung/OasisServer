@@ -4,28 +4,22 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
+
 import oasis.economyx.EconomyX;
-import oasis.oasisserver.listeners.banking.BankAccountClosePacketAdapter;
-import oasis.oasisserver.listeners.banking.BankAccountOpenPacketAdapter;
-import oasis.oasisserver.listeners.banking.BankDepositPacketAdapter;
-import oasis.oasisserver.listeners.banking.BankWithdrawPacketAdapter;
-import oasis.oasisserver.listeners.card.CardActivatePacketAdapter;
-import oasis.oasisserver.listeners.card.CardIssuePacketAdapter;
-import oasis.oasisserver.listeners.card.CardRevokePacketAdapter;
-import oasis.oasisserver.listeners.card.CardTerminalCreatePacketAdapter;
-import oasis.oasisserver.listeners.create.CreateCompanyPacketAdapter;
-import oasis.oasisserver.listeners.create.CreateInstitutionPacketAdapter;
-import oasis.oasisserver.listeners.create.CreateNationPacketAdapter;
-import oasis.oasisserver.listeners.create.CreateOrganizationPacketAdapter;
-import oasis.oasisserver.listeners.guarantee.GuaranteeIssuePacketAdapter;
-import oasis.oasisserver.listeners.guarantee.GuaranteeRevokePacketAdapter;
-import oasis.oasisserver.listeners.market.MarketDelistAssetPacketAdapter;
-import oasis.oasisserver.listeners.market.MarketListAssetPacketAdapter;
-import oasis.oasisserver.listeners.pay.PayPacketAdapter;
-import oasis.oasisserver.listeners.property.PropertyAbandonPacketAdapter;
-import oasis.oasisserver.listeners.property.PropertyAuthorizeProtectionPacketAdapter;
-import oasis.oasisserver.listeners.property.PropertyClaimPacketAdapter;
-import oasis.oasisserver.listeners.property.PropertySetProtectorPacketAdapter;
+
+import oasis.oasisserver.listeners.banking.*;
+import oasis.oasisserver.listeners.card.*;
+import oasis.oasisserver.listeners.create.*;
+import oasis.oasisserver.listeners.guarantee.*;
+import oasis.oasisserver.listeners.market.*;
+import oasis.oasisserver.listeners.pay.*;
+import oasis.oasisserver.listeners.property.*;
+import oasis.oasisserver.listeners.social.*;
+import oasis.oasisserver.listeners.vaulting.*;
+import oasis.oasisserver.listeners.voting.*;
+import oasis.oasisserver.listeners.warfare.*;
+
+import org.bukkit.Bukkit;
 
 /**
  * Main class of OasisServer.
@@ -42,6 +36,9 @@ public final class OasisServer extends EconomyX {
     @Override
     public void onEnable() {
         super.onEnable();
+
+        Bukkit.getLogger().info("Starting OasisServer bootstrap.");
+        Bukkit.getLogger().info("This is an EconomyX product.");
 
         final OasisServer os = this;
         final ListenerPriority lp = ListenerPriority.MONITOR;
@@ -74,20 +71,29 @@ public final class OasisServer extends EconomyX {
 
         PROTOCOL_MANAGER.addPacketListener(new MarketListAssetPacketAdapter(os, lp, pt));
         PROTOCOL_MANAGER.addPacketListener(new MarketDelistAssetPacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new MarketPlaceOrderPacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new MarketCancelOrderPacketAdapter(os, lp, pt));
 
-        // order#create#order
-        // order#cancel#order
+        PROTOCOL_MANAGER.addPacketListener(new VaultCreatePacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new VaultAuthorizeKeepingPacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new VaultSetKeeperPacketAdapter(os, lp, pt));
 
-        // vault#create
-        // vault#setkeeper (called by holder)
-        // vault#authroizekeeping (called by keeper)
+        PROTOCOL_MANAGER.addPacketListener(new VoteCreatePacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new VoteCastPacketAdapter(os, lp, pt));
 
-        // vote#create
-        // vote#cast#votes
+        PROTOCOL_MANAGER.addPacketListener(new HostilityDeclarePacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new HostilityRevokePacketAdapter(os, lp, pt));
 
-        // hostility#declare
-        // hostility#revoke
+        PROTOCOL_MANAGER.addPacketListener(new DirectMessagePacketAdapter(os, lp, pt));
 
-        // dm#send (Handled through OasisServer)
+        Bukkit.getLogger().info("OasisServer bootstrap complete!");
+    }
+
+    @Override
+    public void onDisable() {
+        super.onDisable();
+
+        Bukkit.getLogger().info("OasisServer is shutting down.");
+        Bukkit.getLogger().info("This is an EconomyX product.");
     }
 }
