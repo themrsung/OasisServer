@@ -7,6 +7,7 @@ import oasis.economyx.interfaces.actor.types.governance.Representable;
 import oasis.economyx.state.EconomyState;
 import oasis.oasisserver.OasisServer;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -53,7 +54,11 @@ public abstract class OasisCommandTranslator implements Listener {
                 String[] argsAfter = Arrays.copyOfRange(args, 1, args.length);
 
                 e.setCancelled(true);
-                onOasisRequest(caller, argsAfter, AccessLevel.SELF);
+                try {
+                    onOasisRequest(e.getPlayer(), caller, argsAfter, AccessLevel.SELF);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
             } else if (arg0.equalsIgnoreCase("/oasissudo") && args.length > 3) {
                 UUID executorId = UUID.fromString(args[1]);
 
@@ -75,7 +80,11 @@ public abstract class OasisCommandTranslator implements Listener {
                     if (level != AccessLevel.NONE) {
                         e.setCancelled(true);
                         String[] argsAfter = Arrays.copyOfRange(args, 2, args.length);
-                        onOasisRequest(executor, argsAfter, level);
+                        try {
+                            onOasisRequest(e.getPlayer(), executor, argsAfter, level);
+                        } catch(Exception e1) {
+                            throw new RuntimeException();
+                        }
                     }
                 } catch (IllegalArgumentException error) {
                     Bukkit.getLogger().info("Invalid Oasis sudo request from: " + e.getPlayer().getName());
@@ -84,7 +93,7 @@ public abstract class OasisCommandTranslator implements Listener {
         }
     }
 
-    protected abstract void onOasisRequest(@NonNull Actor executor, @NonNull String[] args, @NonNull AccessLevel accessLevel);
+    protected abstract void onOasisRequest(@NonNull Player player, @NonNull Actor executor, @NonNull String[] args, @NonNull AccessLevel accessLevel) throws Exception;
 
     public enum AccessLevel {
         SELF,
