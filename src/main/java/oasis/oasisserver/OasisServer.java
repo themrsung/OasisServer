@@ -1,27 +1,41 @@
 package oasis.oasisserver;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-
 import oasis.economyx.EconomyX;
-
-import oasis.oasisserver.listeners.asset.AssetDephysicalizePacketAdapter;
-import oasis.oasisserver.listeners.asset.AssetPhysicalizePacketAdapter;
-import oasis.oasisserver.listeners.banking.*;
-import oasis.oasisserver.listeners.card.*;
-import oasis.oasisserver.listeners.create.*;
-import oasis.oasisserver.listeners.guarantee.*;
-import oasis.oasisserver.listeners.market.*;
-import oasis.oasisserver.listeners.pay.*;
-import oasis.oasisserver.listeners.property.*;
-import oasis.oasisserver.listeners.social.*;
-import oasis.oasisserver.listeners.state.StateGetPacketAdapter;
-import oasis.oasisserver.listeners.vaulting.*;
-import oasis.oasisserver.listeners.voting.*;
-import oasis.oasisserver.listeners.warfare.*;
-
+import oasis.oasisserver.listeners.asset.AssetDephysicalizeListener;
+import oasis.oasisserver.listeners.asset.AssetPhysicalizeListener;
+import oasis.oasisserver.listeners.banking.BankAccountCloseListener;
+import oasis.oasisserver.listeners.banking.BankAccountOpenListener;
+import oasis.oasisserver.listeners.banking.BankDepositListener;
+import oasis.oasisserver.listeners.banking.BankWithdrawListener;
+import oasis.oasisserver.listeners.card.CardActivateListener;
+import oasis.oasisserver.listeners.card.CardIssueListener;
+import oasis.oasisserver.listeners.card.CardRevokeListener;
+import oasis.oasisserver.listeners.card.CardTerminalCreateListener;
+import oasis.oasisserver.listeners.contract.ContractCreateListener;
+import oasis.oasisserver.listeners.contract.ContractForgiveListener;
+import oasis.oasisserver.listeners.contract.OptionExerciseListener;
+import oasis.oasisserver.listeners.create.CreateCompanyListener;
+import oasis.oasisserver.listeners.create.CreateInstitutionListener;
+import oasis.oasisserver.listeners.create.CreateNationListener;
+import oasis.oasisserver.listeners.create.CreateOrganizationListener;
+import oasis.oasisserver.listeners.guarantee.GuaranteeIssueListener;
+import oasis.oasisserver.listeners.guarantee.GuaranteeRevokeListener;
+import oasis.oasisserver.listeners.market.MarketCancelOrderListener;
+import oasis.oasisserver.listeners.market.MarketPlaceOrderListener;
+import oasis.oasisserver.listeners.pay.PayListener;
+import oasis.oasisserver.listeners.property.PropertyAbandonListener;
+import oasis.oasisserver.listeners.property.PropertyAuthorizeProtectionListener;
+import oasis.oasisserver.listeners.property.PropertyClaimListener;
+import oasis.oasisserver.listeners.property.PropertySetProtectorListener;
+import oasis.oasisserver.listeners.social.DirectMessageListener;
+import oasis.oasisserver.listeners.state.StateGetListener;
+import oasis.oasisserver.listeners.vaulting.VaultAuthorizeKeepingListener;
+import oasis.oasisserver.listeners.vaulting.VaultCreateListener;
+import oasis.oasisserver.listeners.vaulting.VaultSetKeeperListener;
+import oasis.oasisserver.listeners.voting.VoteCastListener;
+import oasis.oasisserver.listeners.voting.VoteCreateListener;
+import oasis.oasisserver.listeners.warfare.HostilityDeclareListener;
+import oasis.oasisserver.listeners.warfare.HostilityRevokeListener;
 import oasis.oasisserver.types.Message;
 import org.bukkit.Bukkit;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -33,97 +47,14 @@ import java.util.UUID;
 /**
  * Main class of OasisServer.
  * <p>
- *     Oasis uses a custom Minecraft client, and handles network IO via packets.
+ *     Oasis uses a custom Minecraft client, and handles network IO via packets. (was supposed to)
+ *     Now uses command preprocess events due to time constraints.
  *     In-game commands are not used. (even for basic messaging or teleportation)
  *     Vanilla clients can still join, but cannot use any of the features.
  *     (unless they create their own client compatible with this implementation)
  * </p>
  */
 public final class OasisServer extends EconomyX {
-    public static final ProtocolManager PROTOCOL_MANAGER = ProtocolLibrary.getProtocolManager();
-
-    @Override
-    public void onEnable() {
-        super.onEnable();
-
-        Bukkit.getLogger().info("Starting OasisServer bootstrap.");
-        Bukkit.getLogger().info("This is an EconomyX product.");
-
-        final OasisServer os = this;
-        final ListenerPriority lp = ListenerPriority.MONITOR;
-        final PacketType pt = PacketType.Play.Client.CUSTOM_PAYLOAD;
-
-        // Asset
-        PROTOCOL_MANAGER.addPacketListener(new AssetPhysicalizePacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new AssetDephysicalizePacketAdapter(os, lp, pt));
-
-        // Creation
-        PROTOCOL_MANAGER.addPacketListener(new CreateCompanyPacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new CreateInstitutionPacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new CreateNationPacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new CreateOrganizationPacketAdapter(os, lp, pt));
-
-        // Banking
-        PROTOCOL_MANAGER.addPacketListener(new BankAccountOpenPacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new BankAccountClosePacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new BankDepositPacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new BankWithdrawPacketAdapter(os, lp, pt));
-
-        // Card
-        PROTOCOL_MANAGER.addPacketListener(new CardActivatePacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new CardIssuePacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new CardRevokePacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new CardTerminalCreatePacketAdapter(os, lp, pt));
-
-        // Guarantee
-        PROTOCOL_MANAGER.addPacketListener(new GuaranteeIssuePacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new GuaranteeRevokePacketAdapter(os, lp, pt));
-
-        // Payment
-        PROTOCOL_MANAGER.addPacketListener(new PayPacketAdapter(os, lp, pt));
-
-        // Property
-        PROTOCOL_MANAGER.addPacketListener(new PropertyClaimPacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new PropertyAbandonPacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new PropertySetProtectorPacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new PropertyAuthorizeProtectionPacketAdapter(os, lp, pt));
-
-        // Market
-        PROTOCOL_MANAGER.addPacketListener(new MarketListAssetPacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new MarketDelistAssetPacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new MarketPlaceOrderPacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new MarketCancelOrderPacketAdapter(os, lp, pt));
-
-        // Vault
-        PROTOCOL_MANAGER.addPacketListener(new VaultCreatePacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new VaultAuthorizeKeepingPacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new VaultSetKeeperPacketAdapter(os, lp, pt));
-
-        // Vote
-        PROTOCOL_MANAGER.addPacketListener(new VoteCreatePacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new VoteCastPacketAdapter(os, lp, pt));
-
-        // Warfare
-        PROTOCOL_MANAGER.addPacketListener(new HostilityDeclarePacketAdapter(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new HostilityRevokePacketAdapter(os, lp, pt));
-
-        // Social
-        PROTOCOL_MANAGER.addPacketListener(new DirectMessagePacketAdapter(os, lp, pt));
-
-        // State
-        PROTOCOL_MANAGER.addPacketListener(new StateGetPacketAdapter(os, lp, pt));
-
-        Bukkit.getLogger().info("OasisServer bootstrap complete!");
-    }
-
-    @Override
-    public void onDisable() {
-        super.onDisable();
-
-        Bukkit.getLogger().info("OasisServer is shutting down.");
-        Bukkit.getLogger().info("This is an EconomyX product.");
-    }
-
     private transient final List<Message> messages = new ArrayList<>();
 
     public List<Message> getMessagesByRecipient(@NonNull UUID recipient) {
@@ -152,5 +83,80 @@ public final class OasisServer extends EconomyX {
 
     public void addMessage(@NonNull Message message) {
         this.messages.add(message);
+    }
+
+    @Override
+    public void onEnable() {
+        super.onEnable();
+
+        Bukkit.getLogger().info("Starting OasisServer bootstrap.");
+        Bukkit.getLogger().info("This is an EconomyX product.");
+
+        // Input
+        registerListeners();
+
+        // Output
+
+
+        Bukkit.getLogger().info("OasisServer bootstrap complete!");
+    }
+
+    @Override
+    public void onDisable() {
+        super.onDisable();
+
+        Bukkit.getLogger().info("OasisServer is shutting down.");
+        Bukkit.getLogger().info("This is an EconomyX product.");
+    }
+
+    private void registerListeners() {
+        new AssetDephysicalizeListener(this, getRawState());
+        new AssetPhysicalizeListener(this, getRawState());
+
+        new BankAccountCloseListener(this, getRawState());
+        new BankAccountOpenListener(this, getRawState());
+        new BankDepositListener(this, getRawState());
+        new BankWithdrawListener(this, getRawState());
+
+        new CardActivateListener(this, getRawState());
+        new CardIssueListener(this, getRawState());
+        new CardRevokeListener(this, getRawState());
+        new CardTerminalCreateListener(this, getRawState());
+
+        new ContractCreateListener(this, getRawState());
+        new ContractForgiveListener(this, getRawState());
+        new OptionExerciseListener(this, getRawState());
+
+        new CreateCompanyListener(this, getRawState());
+        new CreateInstitutionListener(this, getRawState());
+        new CreateNationListener(this, getRawState());
+        new CreateOrganizationListener(this, getRawState());
+
+        new GuaranteeIssueListener(this, getRawState());
+        new GuaranteeRevokeListener(this, getRawState());
+
+        new MarketCancelOrderListener(this, getRawState());
+        new MarketPlaceOrderListener(this, getRawState());
+
+        new PayListener(this, getRawState());
+
+        new PropertyAbandonListener(this, getRawState());
+        new PropertyAuthorizeProtectionListener(this, getRawState());
+        new PropertyClaimListener(this, getRawState());
+        new PropertySetProtectorListener(this, getRawState());
+
+        new DirectMessageListener(this, getRawState());
+
+        new StateGetListener(this, getRawState());
+
+        new VaultAuthorizeKeepingListener(this, getRawState());
+        new VaultSetKeeperListener(this, getRawState());
+        new VaultCreateListener(this, getRawState());
+
+        new VoteCastListener(this, getRawState());
+        new VoteCreateListener(this, getRawState());
+
+        new HostilityDeclareListener(this, getRawState());
+        new HostilityRevokeListener(this, getRawState());
     }
 }
