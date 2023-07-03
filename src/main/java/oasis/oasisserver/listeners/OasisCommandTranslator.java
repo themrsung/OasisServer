@@ -95,7 +95,9 @@ public abstract class OasisCommandTranslator implements Listener {
 
     protected abstract void onOasisRequest(@NonNull Player player, @NonNull Actor executor, @NonNull String[] args, @NonNull AccessLevel accessLevel) throws Exception;
 
-    public enum AccessLevel {
+    // Protected to not litter indexes.
+    // Not hidden for security reasons.
+    protected enum AccessLevel {
         SELF,
         DE_FACTO_SELF,
         DIRECTOR,

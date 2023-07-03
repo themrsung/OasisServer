@@ -22,6 +22,8 @@ public final class AssetDephysicalizeListener extends OasisCommandTranslator {
     protected void onOasisRequest(@NonNull Player player, @NonNull Actor executor, @NonNull String[] args, @NonNull AccessLevel accessLevel) throws Exception {
         ItemStack item = player.getInventory().getItemInMainHand();
 
+        // Issued banknotes are not stored in physicalized assets; No need to check
+
         UUID id = UUID.fromString(item.getItemMeta().getLore().get(0));
         for (PhysicalAsset pa : getState().getPhysicalizedAssets()) {
             if (pa.getUniqueId().equals(id)) {

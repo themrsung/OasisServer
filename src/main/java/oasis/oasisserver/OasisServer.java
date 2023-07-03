@@ -47,7 +47,7 @@ import java.util.UUID;
 /**
  * Main class of OasisServer.
  * <p>
- *     Oasis uses a custom Minecraft client, and handles network IO via packets. (was supposed to)
+ *     Oasis uses a custom Minecraft client, <s>and handles network IO via packets.</s> (was supposed to)
  *     Now uses command preprocess events due to time constraints.
  *     In-game commands are not used. (even for basic messaging or teleportation)
  *     Vanilla clients can still join, but cannot use any of the features.

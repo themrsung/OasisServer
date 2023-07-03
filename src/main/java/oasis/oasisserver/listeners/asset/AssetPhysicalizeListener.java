@@ -5,6 +5,7 @@ import oasis.economyx.interfaces.actor.Actor;
 import oasis.economyx.state.EconomyState;
 import oasis.economyx.types.asset.AssetStack;
 import oasis.economyx.types.asset.PhysicalAsset;
+import oasis.economyx.types.asset.cash.CashStack;
 import oasis.oasisserver.OasisServer;
 import oasis.oasisserver.listeners.OasisCommandTranslator;
 import org.bukkit.Bukkit;
@@ -28,6 +29,8 @@ public final class AssetPhysicalizeListener extends OasisCommandTranslator {
         for (AssetStack as : executor.getAssets().get()) {
             if (as.getAsset().getUniqueId().equals(assetId)) {
                 if (as.getQuantity() > quantity) {
+                    if (as instanceof CashStack) return; // Cash requires a NoteIssuer to physicalize.
+
                     AssetStack stack = as.copy();
                     stack.setQuantity(quantity);
 
