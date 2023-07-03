@@ -7,8 +7,8 @@ import com.comphenix.protocol.events.ListenerPriority;
 
 import oasis.economyx.EconomyX;
 
-import oasis.oasisserver.listeners.asset.AssetDephysicalizeListener;
-import oasis.oasisserver.listeners.asset.AssetPhysicalizeListener;
+import oasis.oasisserver.listeners.asset.AssetDephysicalizePacketAdapter;
+import oasis.oasisserver.listeners.asset.AssetPhysicalizePacketAdapter;
 import oasis.oasisserver.listeners.banking.*;
 import oasis.oasisserver.listeners.card.*;
 import oasis.oasisserver.listeners.create.*;
@@ -40,7 +40,7 @@ import java.util.UUID;
  * </p>
  */
 public final class OasisServer extends EconomyX {
-    private static final ProtocolManager PROTOCOL_MANAGER = ProtocolLibrary.getProtocolManager();
+    public static final ProtocolManager PROTOCOL_MANAGER = ProtocolLibrary.getProtocolManager();
 
     @Override
     public void onEnable() {
@@ -54,8 +54,8 @@ public final class OasisServer extends EconomyX {
         final PacketType pt = PacketType.Play.Client.CUSTOM_PAYLOAD;
 
         // Asset
-        PROTOCOL_MANAGER.addPacketListener(new AssetPhysicalizeListener(os, lp, pt));
-        PROTOCOL_MANAGER.addPacketListener(new AssetDephysicalizeListener(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new AssetPhysicalizePacketAdapter(os, lp, pt));
+        PROTOCOL_MANAGER.addPacketListener(new AssetDephysicalizePacketAdapter(os, lp, pt));
 
         // Creation
         PROTOCOL_MANAGER.addPacketListener(new CreateCompanyPacketAdapter(os, lp, pt));

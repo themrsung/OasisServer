@@ -6,8 +6,8 @@ import com.comphenix.protocol.events.PacketEvent;
 import oasis.oasisserver.listeners.OasisPacketAdapter;
 import org.bukkit.plugin.Plugin;
 
-public final class AssetPhysicalizeListener extends OasisPacketAdapter {
-    public AssetPhysicalizeListener(Plugin plugin, ListenerPriority listenerPriority, PacketType type) {
+public final class AssetDephysicalizePacketAdapter extends OasisPacketAdapter {
+    public AssetDephysicalizePacketAdapter(Plugin plugin, ListenerPriority listenerPriority, PacketType type) {
         super(plugin, listenerPriority, type);
     }
 

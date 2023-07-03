@@ -8,9 +8,9 @@ import java.util.UUID;
 
 /**
  * Direct message sent from one person to another.
- * @param id ID of this content
- * @param sender Sender of this content
- * @param recipient Recipient of this content
+ * @param id ID of this message
+ * @param sender Sender of this message
+ * @param recipient Recipient of this message
  * @param content Content
  * @param time Time
  */

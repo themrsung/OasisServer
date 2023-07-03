@@ -14,6 +14,8 @@ public final class CreateInstitutionPacketAdapter extends OasisPacketAdapter {
     @Override
     public void onPacketReceiving(PacketEvent event) {
         super.onPacketReceiving(event);
+
+        // TODO Send initial capital from founder to created actor
     }
 
     @Override
