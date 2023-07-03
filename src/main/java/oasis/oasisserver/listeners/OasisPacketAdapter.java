@@ -7,6 +7,8 @@ import oasis.economyx.interfaces.actor.Actor;
 import oasis.economyx.interfaces.actor.person.Person;
 import oasis.economyx.interfaces.actor.types.employment.Employer;
 import oasis.economyx.interfaces.actor.types.governance.Representable;
+import oasis.economyx.state.EconomyState;
+import oasis.oasisserver.OasisServer;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -50,5 +52,22 @@ public abstract class OasisPacketAdapter extends PacketAdapter {
         }
 
         return hasAccess;
+    }
+
+    @Override
+    public OasisServer getPlugin() {
+        if (!(super.getPlugin() instanceof OasisServer)) throw new RuntimeException();
+
+        return (OasisServer) super.getPlugin();
+    }
+
+    @NonNull
+    protected EconomyState getCopiedState() {
+        return getPlugin().getCopiedState();
+    }
+
+    @NonNull
+    protected EconomyState getCensoredState(@NonNull Person viewer) {
+        return getPlugin().getCensoredState(viewer);
     }
 }
